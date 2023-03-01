@@ -12,12 +12,11 @@ namespace MobileAPIGateway.Yarp
     public static class Yarp
     {
         private static bool _useAntiForgery;
-        public static void AddSpaYarpBff(this IServiceCollection services, IConfiguration configuration)
+        public static void AddSpaGateway(this IServiceCollection services, IConfiguration configuration)
         {
             // Internal Config from Microsoft Yarp
             var yarp = configuration.GetRequiredSection("Yarp");
             services.AddReverseProxy().LoadFromConfig(yarp);
-            services.AddSpaYarp();
             services.AddSingleton<IForwarderHttpClientFactory, HttpClientWithBearerFactory>();
 
             // Can be changed in the future
@@ -134,7 +133,7 @@ namespace MobileAPIGateway.Yarp
             _useAntiForgery = true;
         }
 
-        public static void MapSpaYarpBff(this WebApplication app)
+        public static void MapYarpGateway(this WebApplication app)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             app.UseCookiePolicy();
@@ -162,7 +161,6 @@ namespace MobileAPIGateway.Yarp
                 .RequireAuthorization();
 
             app.MapReverseProxy();
-            app.UseSpaYarp();
             app.MapFallbackToFile("index.html");
         }
     }

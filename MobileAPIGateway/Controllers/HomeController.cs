@@ -15,10 +15,10 @@ namespace MobileAPIGateway.Controllers
             _httpClient = httpClient;
         }
 
-        public  IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var Url = "http://apigate-test-hrsd.meemdev.com/booking/api/v1/Counselor/Comments?id=d684ed69-9c2b-4b54-e09d-08d9d99f5582&PageSize=10&PageIndex=0";
-            var responseString = _httpClient.GetStringAsync(Url).Result;
+            var url = "http://apigate-test-hrsd.meemdev.com/booking/api/v1/Counselor/Comments?id=d684ed69-9c2b-4b54-e09d-08d9d99f5582&PageSize=10&PageIndex=0";
+            var responseString = await _httpClient.GetStringAsync(url);
             return View();
         }
 
