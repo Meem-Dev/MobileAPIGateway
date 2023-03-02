@@ -154,8 +154,10 @@ namespace MobileAPIGateway.Yarp
                     await nextMiddleware();
                 });
 
-            app.Map("Account/Challenged", () => Results.Challenge(new AuthenticationProperties { RedirectUri = "/" }));
-            app.Map("Account/Authenticate", () => Results.Ok()).RequireAuthorization();
+            app.Map("Account/Challenged", () =>
+            Results.Challenge(new AuthenticationProperties { RedirectUri = "/" }));
+            app.Map("Account/Authenticate", () =>
+            Results.Ok()).RequireAuthorization();
             app.MapPost("Account/Signout", () =>
                 Results.SignOut(authenticationSchemes: new[] { CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme }))
                 .RequireAuthorization();
