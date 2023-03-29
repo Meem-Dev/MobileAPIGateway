@@ -1,11 +1,17 @@
 using MobileAPIGateway.Yarp;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSpaGateway(builder.Configuration);
-
+builder.Host.UseSerilog((builderContext, config) =>
+{
+    config
+    .Enrich.FromLogContext()
+    .ReadFrom.Configuration(builderContext.Configuration);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

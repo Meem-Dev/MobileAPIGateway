@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -10,11 +12,13 @@
 
 <script>
     window.onload = function () {
-        debugger
+        debugger;
+        var sessionvalue = '@ViewBag.AccessToken';
     $.ajax({
         type: "POST",
         url: '@Url.Action("token", "Home")',
         contentType: "application/json; charset=utf-8",
+        headers: { "Access-token": sessionvalue },
         dataType: "json",
         success: function (result) {
             alert(result);

@@ -30,13 +30,14 @@ namespace MobileAPIGateway.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var accessToken = _accessor.HttpContext.GetTokenAsync("access_token").ConfigureAwait(false).GetAwaiter().GetResult().ToString();
+
+            ViewBag.AccessToken = accessToken;
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> token()
         {
-            var accessToken = _accessor.HttpContext.GetTokenAsync("access_token").ConfigureAwait(false).GetAwaiter().GetResult().ToString();
-           _accessor.HttpContext.Response.Headers.Add("Access-token", accessToken);
             return View("Index");
         }
         public IActionResult Privacy()
