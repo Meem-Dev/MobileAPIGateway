@@ -1,11 +1,28 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using MobileAPIGateway.Yarp;
 using Serilog;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSpaGateway(builder.Configuration);
+
+
+   
+
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+//        .RequireAuthenticatedUser()
+//        .Build();
+//});
+
 builder.Host.UseSerilog((builderContext, config) =>
 {
     config
@@ -13,6 +30,7 @@ builder.Host.UseSerilog((builderContext, config) =>
     .ReadFrom.Configuration(builderContext.Configuration);
 });
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -22,6 +40,7 @@ if (!app.Environment.IsDevelopment())
  
 }
 
+app.MapYarpGateway();
 
 app.UseHttpsRedirection()
     .UseStaticFiles()
@@ -29,7 +48,7 @@ app.UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization();
 
-app.MapYarpGateway();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
