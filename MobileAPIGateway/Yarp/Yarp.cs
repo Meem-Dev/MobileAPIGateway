@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Yarp.ReverseProxy.Forwarder;
+using System.Security.Cryptography;
 
 namespace MobileAPIGateway.Yarp
 {
@@ -48,6 +49,24 @@ namespace MobileAPIGateway.Yarp
                             context.Response.StatusCode = 401;
                         return Task.CompletedTask;
                     }
+                };
+            }).AddJwtBearer(options =>
+            {
+                var ValidateMobileAudience = configuration.GetValue<string>("ValidateMobileAudience");
+                var certfile = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "IdentityCertificate.pem"));
+                var cert = RSA.Create();
+                cert.ImportFromPem(certfile);
+                options.Authority = null;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidIssuer = ValidateMobileAudience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new RsaSecurityKey(cert),
+                    ValidAlgorithms = new[] { "RS256" },
+                    ValidateLifetime = false
                 };
             })
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>

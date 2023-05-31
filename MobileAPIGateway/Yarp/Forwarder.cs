@@ -23,8 +23,13 @@ namespace MobileAPIGateway.Yarp
             if (token is { })
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await base.SendAsync(request, cancellationToken);
-            return response;
+            try
+            {
+                var response = await base.SendAsync(request, cancellationToken);
+                return response;
+            }catch(Exception ex) 
+            { }
+            return null;
         }
 
     }
